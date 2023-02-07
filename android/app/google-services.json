@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "911253745227",
+    "project_id": "wonder-words-48ca4",
+    "storage_bucket": "wonder-words-48ca4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911253745227:android:c4a5c0a879ffc8ad98a7ce",
+        "android_client_info": {
+          "package_name": "com.raywenderlich.wonder_words"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911253745227-fihvvrivk26cdsmmcf1nedba5lp18t60.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtw9JQe43dyoMFq6mht8afhNOsHjY6Lyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911253745227-fihvvrivk26cdsmmcf1nedba5lp18t60.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
