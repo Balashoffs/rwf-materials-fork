@@ -83,7 +83,7 @@ class _WonderWordsState extends State<WonderWords> {
   late final _routerDelegate;
   final _lightTheme = LightWonderThemeData();
   final _darkTheme = DarkWonderThemeData();
-  late StreamSubscription _incomingDynamicLinksSubscription;
+  // late StreamSubscription _incomingDynamicLinksSubscription;
 
   @override
   void initState() {
@@ -124,17 +124,17 @@ class _WonderWordsState extends State<WonderWords> {
 
     _openInitialDynamicLinkIfAny();
 
-    _incomingDynamicLinksSubscription =
-        _dynamicLinkService.onNewDynamicLinkPath().listen(
-              _routerDelegate.push,
-            );
+    // _incomingDynamicLinksSubscription =
+    //     _dynamicLinkService.onNewDynamicLinkPath().listen(
+    //           _routerDelegate.push,
+    //         );
   }
 
   Future<void> _openInitialDynamicLinkIfAny() async {
-    final path = await _dynamicLinkService.getInitialDynamicLinkPath();
-    if (path != null) {
-      _routerDelegate.push(path);
-    }
+    // final path = await _dynamicLinkService.getInitialDynamicLinkPath();
+    // if (path != null) {
+    //   _routerDelegate.push(path);
+    // }
   }
 
   @override
@@ -177,7 +177,7 @@ class _WonderWordsState extends State<WonderWords> {
 
   @override
   void dispose() {
-    _incomingDynamicLinksSubscription.cancel();
+    // _incomingDynamicLinksSubscription.cancel();
     super.dispose();
   }
 }
