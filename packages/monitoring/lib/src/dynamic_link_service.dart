@@ -10,7 +10,9 @@ typedef OnNewDynamicLinkPath = void Function(String newDynamicLinkPath);
 
 /// Wrapper around [FirebaseDynamicLinks].
 class DynamicLinkService {
-  static const _domainUriPrefix = 'https://wonderwords1.page.link';
+  // TODO: Create a constant to hold your dynamic link prefix.
+
+  static const _domainUriPrefix = 'https://raywenderlich2315.page.link';
   static const _iOSBundleId = 'com.raywenderlich.wonderWords';
   static const _androidPackageName = 'com.raywenderlich.wonder_words';
 
@@ -20,41 +22,14 @@ class DynamicLinkService {
 
   final FirebaseDynamicLinks _dynamicLinks;
 
-  Future<String> generateDynamicLinkUrl({
-    required String path,
-    SocialMetaTagParameters? socialMetaTagParameters,
-  }) async {
-    final parameters = DynamicLinkParameters(
-      uriPrefix: _domainUriPrefix,
-      link: Uri.parse(
-        '$_domainUriPrefix$path',
-      ),
-      androidParameters: const AndroidParameters(
-        packageName: _androidPackageName,
-      ),
-      iosParameters: const IOSParameters(
-        bundleId: _iOSBundleId,
-      ),
-      socialMetaTagParameters: socialMetaTagParameters,
-    );
+  // TODO: Create a function that generates dynamic links
 
-    final shortLink = await _dynamicLinks.buildShortLink(parameters);
-    return shortLink.shortUrl.toString();
-  }
 
-  Future<String?> getInitialDynamicLinkPath() async {
-    final data = await _dynamicLinks.getInitialLink();
-    final link = data?.link;
-    return link?.path;
-  }
 
-  Stream<String> onNewDynamicLinkPath() {
-    return _dynamicLinks.onLink.map(
-      (PendingDynamicLinkData data) {
-        final link = data.link;
-        final path = link.path;
-        return path;
-      },
-    );
-  }
+// TODO: Create a function that returns the link that launched the app.
+
+
+
+// TODO: Expose a way to listen to new links.
+
 }

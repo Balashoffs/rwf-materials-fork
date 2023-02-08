@@ -89,16 +89,7 @@ MaterialPage _quoteDetailsPageBuilder(
       onAuthenticationError: () {
         routerDelegate.push(_PathConstants.signInPath);
       },
-      shareableLinkGenerator: (quote) =>
-          dynamicLinkService.generateDynamicLinkUrl(
-        path: _PathConstants.quoteDetailsPath(
-          quoteId: quote.id,
-        ),
-        socialMetaTagParameters: SocialMetaTagParameters(
-          title: quote.body,
-          description: quote.author,
-        ),
-      ),
+      // TODO: Specify the shareableLinkGenerator parameter.
     ),
   );
 }

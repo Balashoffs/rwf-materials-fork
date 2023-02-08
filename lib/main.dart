@@ -89,6 +89,8 @@ class _WonderWordsState extends State<WonderWords> {
   void initState() {
     super.initState();
 
+    // TODO: Handle initial dynamic link if any.
+
     _favQsApi = FavQsApi(
       userTokenSupplier: () => _userRepository.getUserToken(),
     );

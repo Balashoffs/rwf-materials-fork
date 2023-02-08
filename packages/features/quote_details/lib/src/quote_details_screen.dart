@@ -131,6 +131,7 @@ class _QuoteActionsAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<QuoteDetailsCubit>();
+    //    final shareableLinkGenerator = this.shareableLinkGenerator;
     return RowAppBar(
       children: [
         FavoriteIconButton(
