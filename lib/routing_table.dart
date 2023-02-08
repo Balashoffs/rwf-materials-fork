@@ -37,117 +37,131 @@ Map<String, PageBuilder> buildRoutingTable({
           onAuthenticationError: (context) {
             routerDelegate.push(_PathConstants.signInPath);
           },
+          remoteValueService: remoteValueService,
           onQuoteSelected: (id) {
-            final navigation = routerDelegate.push<Quote?>(
-              _PathConstants.quoteDetailsPath(
-                quoteId: id,
-              ),
-            );
+            final navigation = routerDelegate
+                .push<Quote?>(_PathConstants.quoteDetailsPath(quoteId: id));
             return navigation.result;
           },
-          remoteValueService: remoteValueService,
         ),
       );
     },
-    _PathConstants.profileMenuPath: (_) {
+    _PathConstants.profileMenuPath: (route) {
       return MaterialPage(
-        name: 'profile-menu',
+        name: '',
         child: ProfileMenuScreen(
-          quoteRepository: quoteRepository,
           userRepository: userRepository,
+          quoteRepository: quoteRepository,
           onSignInTap: () {
-            routerDelegate.push(
-              _PathConstants.signInPath,
-            );
+            routerDelegate.push(_PathConstants.signInPath);
           },
           onSignUpTap: () {
-            routerDelegate.push(
-              _PathConstants.signUpPath,
-            );
+            routerDelegate.push(_PathConstants.signUpPath);
           },
           onUpdateProfileTap: () {
-            routerDelegate.push(
-              _PathConstants.updateProfilePath,
-            );
+            routerDelegate.push(_PathConstants.updateProfilePath);
           },
         ),
       );
     },
-    _PathConstants.updateProfilePath: (_) => MaterialPage(
-          name: 'update-profile',
-          child: UpdateProfileScreen(
-            userRepository: userRepository,
-            onUpdateProfileSuccess: () {
-              routerDelegate.pop();
-            },
-          ),
-        ),
-    _PathConstants.quoteDetailsPath(): (info) => MaterialPage(
-          name: 'quote-details',
-          child: QuoteDetailsScreen(
-            quoteRepository: quoteRepository,
-            quoteId: int.parse(
-              info.pathParameters[_PathConstants.idPathParameter] ?? '',
-            ),
-            onAuthenticationError: () {
-              routerDelegate.push(_PathConstants.signInPath);
-            },
-            shareableLinkGenerator: (quote) {
-              return dynamicLinkService.generateDynamicLinkUrl(
-                path: _PathConstants.quoteDetailsPath(
-                  quoteId: quote.id,
-                ),
-                socialMetaTagParameters: SocialMetaTagParameters(
-                  title: quote.body,
-                  description: quote.author,
-                ),
-              );
-            },
-          ),
-        ),
-    _PathConstants.signInPath: (_) => MaterialPage(
-          name: 'sign-in',
-          fullscreenDialog: true,
-          child: Builder(
-            builder: (context) {
-              return SignInScreen(
-                userRepository: userRepository,
-                onSignInSuccess: () {
-                  routerDelegate.pop();
-                },
-                onSignUpTap: () {
-                  routerDelegate.push(_PathConstants.signUpPath);
-                },
-                onForgotMyPasswordTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return ForgotMyPasswordDialog(
-                        userRepository: userRepository,
-                        onCancelTap: () {
-                          routerDelegate.pop();
-                        },
-                        onEmailRequestSuccess: () {
-                          routerDelegate.pop();
-                        },
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          ),
-        ),
-    _PathConstants.signUpPath: (_) => MaterialPage(
-          name: 'sign-up',
-          child: SignUpScreen(
-            userRepository: userRepository,
-            onSignUpSuccess: () {
-              routerDelegate.pop();
-            },
-          ),
-        ),
+    _PathConstants.signInPath: (_) =>
+        _sighInPageBuilder(userRepository, routerDelegate),
+    _PathConstants.signUpPath: (_) =>
+        _sighUpPageBuilder(userRepository, routerDelegate),
+    _PathConstants.updateProfilePath: (_) =>
+        _updatePageBuilder(userRepository, routerDelegate),
+    _PathConstants.quoteDetailsPath(): (info) => _quoteDetailsPageBuilder(
+        info, dynamicLinkService, quoteRepository, routerDelegate),
   };
+}
+
+MaterialPage _quoteDetailsPageBuilder(
+    RouteData info,
+    DynamicLinkService dynamicLinkService,
+    QuoteRepository quoteRepository,
+    RoutemasterDelegate routerDelegate) {
+  return MaterialPage(
+    name: 'quote-details',
+    child: QuoteDetailsScreen(
+      quoteRepository: quoteRepository,
+      quoteId:
+          int.parse(info.pathParameters[_PathConstants.idPathParameter] ?? ''),
+      onAuthenticationError: () {
+        routerDelegate.push(_PathConstants.signInPath);
+      },
+      shareableLinkGenerator: (quote) =>
+          dynamicLinkService.generateDynamicLinkUrl(
+        path: _PathConstants.quoteDetailsPath(
+          quoteId: quote.id,
+        ),
+        socialMetaTagParameters: SocialMetaTagParameters(
+          title: quote.body,
+          description: quote.author,
+        ),
+      ),
+    ),
+  );
+}
+
+MaterialPage _updatePageBuilder(
+    UserRepository userRepository, RoutemasterDelegate routerDelegate) {
+  return MaterialPage(
+    name: 'update-profile',
+    child: UpdateProfileScreen(
+      userRepository: userRepository,
+      onUpdateProfileSuccess: () {
+        routerDelegate.pop();
+      },
+    ),
+  );
+}
+
+MaterialPage _sighInPageBuilder(
+    UserRepository userRepository, RoutemasterDelegate routerDelegate) {
+  return MaterialPage(
+      name: 'sigh-in',
+      fullscreenDialog: true,
+      child: Builder(
+        builder: (context) {
+          return SignInScreen(
+            userRepository: userRepository,
+            onSignInSuccess: () {
+              routerDelegate.popRoute();
+            },
+            onSignUpTap: () {
+              routerDelegate.push(_PathConstants.signUpPath);
+            },
+            onForgotMyPasswordTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ForgotMyPasswordDialog(
+                      userRepository: userRepository,
+                      onCancelTap: () {
+                        routerDelegate.pop();
+                      },
+                      onEmailRequestSuccess: () {
+                        routerDelegate.pop();
+                      },
+                    );
+                  });
+            },
+          );
+        },
+      ));
+}
+
+MaterialPage _sighUpPageBuilder(
+    UserRepository userRepository, RoutemasterDelegate routerDelegate) {
+  return MaterialPage(
+    name: 'sigh-up',
+    child: SignUpScreen(
+      userRepository: userRepository,
+      onSignUpSuccess: () {
+        routerDelegate.pop();
+      },
+    ),
+  );
 }
 
 class _PathConstants {
@@ -159,7 +173,7 @@ class _PathConstants {
 
   static String get profileMenuPath => '${tabContainerPath}user';
 
-  static String get updateProfilePath => '$profileMenuPath/update-profile';
+  static String get updateProfilePath => '$profileMenuPath/updateprofile';
 
   static String get signInPath => '${tabContainerPath}sign-in';
 

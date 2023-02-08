@@ -10,6 +10,7 @@ import 'package:forgot_my_password/forgot_my_password.dart';
 import 'package:key_value_storage/key_value_storage.dart';
 import 'package:monitoring/monitoring.dart';
 import 'package:profile_menu/profile_menu.dart';
+import 'package:quote_details/quote_details.dart';
 import 'package:quote_list/quote_list.dart';
 import 'package:quote_repository/quote_repository.dart';
 import 'package:routemaster/routemaster.dart';
@@ -83,7 +84,6 @@ class _WonderWordsState extends State<WonderWords> {
   late final _routerDelegate;
   final _lightTheme = LightWonderThemeData();
   final _darkTheme = DarkWonderThemeData();
-  // late StreamSubscription _incomingDynamicLinksSubscription;
 
   @override
   void initState() {
@@ -103,38 +103,16 @@ class _WonderWordsState extends State<WonderWords> {
       noSqlStorage: _keyValueStorage,
     );
 
-    _routerDelegate = RoutemasterDelegate(
-      observers: [
-        ScreenViewObserver(
-          analyticsService: _analyticsService,
-        ),
-      ],
-      routesBuilder: (context) {
-        return RouteMap(
-          routes: buildRoutingTable(
+    _routerDelegate = RoutemasterDelegate(routesBuilder: (context) {
+      return RouteMap(
+        routes: buildRoutingTable(
+            dynamicLinkService: _dynamicLinkService,
+            quoteRepository: _quoteRepository,
             routerDelegate: _routerDelegate,
             userRepository: _userRepository,
-            quoteRepository: _quoteRepository,
-            remoteValueService: widget.remoteValueService,
-            dynamicLinkService: _dynamicLinkService,
-          ),
-        );
-      },
-    );
-
-    _openInitialDynamicLinkIfAny();
-
-    // _incomingDynamicLinksSubscription =
-    //     _dynamicLinkService.onNewDynamicLinkPath().listen(
-    //           _routerDelegate.push,
-    //         );
-  }
-
-  Future<void> _openInitialDynamicLinkIfAny() async {
-    // final path = await _dynamicLinkService.getInitialDynamicLinkPath();
-    // if (path != null) {
-    //   _routerDelegate.push(path);
-    // }
+            remoteValueService: widget.remoteValueService),
+      );
+    });
   }
 
   @override
@@ -151,17 +129,12 @@ class _WonderWordsState extends State<WonderWords> {
             theme: _lightTheme.materialThemeData,
             darkTheme: _darkTheme.materialThemeData,
             themeMode: darkModePreference?.toThemeMode(),
-            supportedLocales: const [
-              Locale('en', ''),
-              Locale('pt', 'BR'),
-            ],
             localizationsDelegates: const [
-              GlobalCupertinoLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
               AppLocalizations.delegate,
               ComponentLibraryLocalizations.delegate,
               ProfileMenuLocalizations.delegate,
               QuoteListLocalizations.delegate,
+              QuoteDetailsLocalizations.delegate,
               SignInLocalizations.delegate,
               ForgotMyPasswordLocalizations.delegate,
               SignUpLocalizations.delegate,
@@ -173,12 +146,6 @@ class _WonderWordsState extends State<WonderWords> {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    // _incomingDynamicLinksSubscription.cancel();
-    super.dispose();
   }
 }
 
