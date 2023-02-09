@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:async';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,9 @@ typedef OnNewDynamicLinkPath = void Function(String newDynamicLinkPath);
 
 /// Wrapper around [FirebaseDynamicLinks].
 class DynamicLinkService {
-  static const _domainUriPrefix = 'https://wonderwords1.page.link';
+  // TODO: Create a constant to hold your dynamic link prefix.
+  // static const _domainUriPrefix = 'https://wonderwords1.page.link';
+  static const _domainUriPrefix = 'https://wonderwords2315.page.link';
   static const _iOSBundleId = 'com.raywenderlich.wonderWords';
   static const _androidPackageName = 'com.raywenderlich.wonder_words';
 
@@ -20,25 +23,21 @@ class DynamicLinkService {
 
   final FirebaseDynamicLinks _dynamicLinks;
 
-  Future<String> generateDynamicLinkUrl({
-    required String path,
-    SocialMetaTagParameters? socialMetaTagParameters,
-  }) async {
+  Future<String> generateDynamicLinkUrl(
+      {required String path,
+      SocialMetaTagParameters? socialMetaTagParameters}) async {
     final parameters = DynamicLinkParameters(
+      link: Uri.parse('$_domainUriPrefix$path'),
       uriPrefix: _domainUriPrefix,
-      link: Uri.parse(
-        '$_domainUriPrefix$path',
-      ),
-      androidParameters: const AndroidParameters(
-        packageName: _androidPackageName,
-      ),
+      androidParameters:
+          const AndroidParameters(packageName: _androidPackageName),
       iosParameters: const IOSParameters(
         bundleId: _iOSBundleId,
       ),
-      socialMetaTagParameters: socialMetaTagParameters,
     );
 
     final shortLink = await _dynamicLinks.buildShortLink(parameters);
+
     return shortLink.shortUrl.toString();
   }
 
@@ -48,13 +47,11 @@ class DynamicLinkService {
     return link?.path;
   }
 
-  Stream<String> onNewDynamicLinkPath() {
-    return _dynamicLinks.onLink.map(
-      (PendingDynamicLinkData data) {
-        final link = data.link;
-        final path = link.path;
-        return path;
-      },
-    );
+  Stream<String> get onNewDynamicLinkPath {
+    return _dynamicLinks.onLink.map((PendingDynamicLinkData event) {
+      final link = event.link;
+      final path = link.path;
+      return path;
+    });
   }
 }

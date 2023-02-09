@@ -48,7 +48,7 @@ Map<String, PageBuilder> buildRoutingTable({
     },
     _PathConstants.profileMenuPath: (route) {
       return MaterialPage(
-        name: '',
+        name: 'profile-menu',
         child: ProfileMenuScreen(
           userRepository: userRepository,
           quoteRepository: quoteRepository,
@@ -89,16 +89,17 @@ MaterialPage _quoteDetailsPageBuilder(
       onAuthenticationError: () {
         routerDelegate.push(_PathConstants.signInPath);
       },
-      shareableLinkGenerator: (quote) =>
-          dynamicLinkService.generateDynamicLinkUrl(
-        path: _PathConstants.quoteDetailsPath(
-          quoteId: quote.id,
-        ),
-        socialMetaTagParameters: SocialMetaTagParameters(
-          title: quote.body,
-          description: quote.author,
-        ),
-      ),
+      shareableLinkGenerator: (quote) {
+        return dynamicLinkService.generateDynamicLinkUrl(
+          path: _PathConstants.quoteDetailsPath(
+            quoteId: quote.id,
+          ),
+          socialMetaTagParameters: SocialMetaTagParameters(
+            title: quote.body,
+            description: quote.author,
+          ),
+        );
+      },
     ),
   );
 }
