@@ -48,7 +48,7 @@ Map<String, PageBuilder> buildRoutingTable({
     },
     _PathConstants.profileMenuPath: (route) {
       return MaterialPage(
-        name: '',
+        name: 'profile-menu',
         child: ProfileMenuScreen(
           userRepository: userRepository,
           quoteRepository: quoteRepository,
@@ -89,7 +89,6 @@ MaterialPage _quoteDetailsPageBuilder(
       onAuthenticationError: () {
         routerDelegate.push(_PathConstants.signInPath);
       },
-      // TODO: Specify the shareableLinkGenerator parameter.
       shareableLinkGenerator: (quote) {
         return dynamicLinkService.generateDynamicLinkUrl(
           path: _PathConstants.quoteDetailsPath(

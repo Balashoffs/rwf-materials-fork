@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:component_library/component_library.dart';
@@ -77,19 +78,17 @@ class _WonderWordsState extends State<WonderWords> {
   final _keyValueStorage = KeyValueStorage();
   final _analyticsService = AnalyticsService();
   final _dynamicLinkService = DynamicLinkService();
-  late final _favQsApi;
-  late final _quoteRepository;
-  late final _userRepository;
-
-  late final _routerDelegate;
+  late final FavQsApi _favQsApi;
+  late final QuoteRepository _quoteRepository;
+  late final UserRepository _userRepository;
+  late StreamSubscription _incomingDynamicLinksSubscription;
+  late final RoutemasterDelegate _routerDelegate;
   final _lightTheme = LightWonderThemeData();
   final _darkTheme = DarkWonderThemeData();
 
   @override
   void initState() {
     super.initState();
-
-    // TODO: Handle initial dynamic link if any.
 
     _favQsApi = FavQsApi(
       userTokenSupplier: () => _userRepository.getUserToken(),
@@ -105,15 +104,30 @@ class _WonderWordsState extends State<WonderWords> {
       noSqlStorage: _keyValueStorage,
     );
 
-    _routerDelegate = RoutemasterDelegate(routesBuilder: (context) {
-      return RouteMap(
-        routes: buildRoutingTable(
-            dynamicLinkService: _dynamicLinkService,
-            quoteRepository: _quoteRepository,
+    _routerDelegate = RoutemasterDelegate(
+      observers: [
+        ScreenViewObserver(
+          analyticsService: _analyticsService,
+        ),
+      ],
+      routesBuilder: (context) {
+        return RouteMap(
+          routes: buildRoutingTable(
             routerDelegate: _routerDelegate,
             userRepository: _userRepository,
-            remoteValueService: widget.remoteValueService),
-      );
+            quoteRepository: _quoteRepository,
+            remoteValueService: widget.remoteValueService,
+            dynamicLinkService: _dynamicLinkService,
+          ),
+        );
+      },
+    );
+
+    _openInitialDynamicLinkIfAny();
+
+    _incomingDynamicLinksSubscription =
+        _dynamicLinkService.onNewDynamicLinkPath.listen((event) {
+      _routerDelegate.push;
     });
   }
 
@@ -148,6 +162,20 @@ class _WonderWordsState extends State<WonderWords> {
         );
       },
     );
+  }
+
+  Future<void> _openInitialDynamicLinkIfAny() async {
+    final path = await _dynamicLinkService.getInitialDynamicLinkPath();
+    if (path != null) {
+      log(path);
+      _routerDelegate.push(path);
+    }
+  }
+
+  @override
+  void dispose() {
+    _incomingDynamicLinksSubscription.cancel();
+    super.dispose();
   }
 }
 
